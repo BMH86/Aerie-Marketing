@@ -15,9 +15,9 @@ import {
   Mail,
   Phone,
   MapPin,
-  Linkedin,
-  Twitter,
-  Youtube,
+  Linkedin as LinkedinIcon,
+  Twitter as TwitterIcon,
+  Youtube as YoutubeIcon,
   ExternalLink,
   LogIn,
   TrendingUp,
@@ -27,6 +27,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,10 +52,31 @@ function App() {
     }
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      email: formData.get('email'),
+      company: formData.get('company'),
+      projectType: formData.get('projectType'),
+      message: formData.get('message'),
+    };
+
+    // TODO: Replace with actual API endpoint
+    // For now, we'll show success message
+    // When implementing, make this function async and add:
+    // await fetch('/api/contact', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(data),
+    // });
+
     toast.success('Thank you for your message! We will contact you soon.');
     setContactDialogOpen(false);
+    e.currentTarget.reset();
   };
 
   const features = [
@@ -154,10 +176,10 @@ function App() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
-              <button onClick={() => scrollToSection('features')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`}>Features</button>
-              <button onClick={() => scrollToSection('reports')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`}>Reports</button>
-              <button onClick={() => scrollToSection('why-pandion')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`}>Why Pandion</button>
-              <button onClick={() => scrollToSection('contact')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`}>Contact</button>
+              <button onClick={() => scrollToSection('features')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`} aria-label="Navigate to Features section">Features</button>
+              <button onClick={() => scrollToSection('reports')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`} aria-label="Navigate to Reports section">Reports</button>
+              <button onClick={() => scrollToSection('why-pandion')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`} aria-label="Navigate to Why Pandion section">Why Pandion</button>
+              <button onClick={() => scrollToSection('contact')} className={`nav-link ${!isScrolled ? 'text-white/80 hover:text-white' : ''}`} aria-label="Navigate to Contact section">Contact</button>
             </div>
 
             <div className="hidden lg:flex items-center gap-4">
@@ -179,9 +201,12 @@ function App() {
             </div>
 
             {/* Mobile Menu Button */}
-            <button 
+            <button
               className="lg:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
               {mobileMenuOpen ? <X className={`w-6 h-6 ${isScrolled ? 'text-[#1E3A5F]' : 'text-white'}`} /> : <Menu className={`w-6 h-6 ${isScrolled ? 'text-[#1E3A5F]' : 'text-white'}`} />}
             </button>
@@ -190,12 +215,12 @@ function App() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t">
+          <div id="mobile-menu" className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t">
             <div className="container-aerie py-4 flex flex-col gap-4">
-              <button onClick={() => scrollToSection('features')} className="text-left py-2 text-[#505759]">Features</button>
-              <button onClick={() => scrollToSection('reports')} className="text-left py-2 text-[#505759]">Reports</button>
-              <button onClick={() => scrollToSection('why-pandion')} className="text-left py-2 text-[#505759]">Why Pandion</button>
-              <button onClick={() => scrollToSection('contact')} className="text-left py-2 text-[#505759]">Contact</button>
+              <button onClick={() => scrollToSection('features')} className="text-left py-2 text-[#505759]" aria-label="Navigate to Features section">Features</button>
+              <button onClick={() => scrollToSection('reports')} className="text-left py-2 text-[#505759]" aria-label="Navigate to Reports section">Reports</button>
+              <button onClick={() => scrollToSection('why-pandion')} className="text-left py-2 text-[#505759]" aria-label="Navigate to Why Pandion section">Why Pandion</button>
+              <button onClick={() => scrollToSection('contact')} className="text-left py-2 text-[#505759]" aria-label="Navigate to Contact section">Contact</button>
               <hr />
               <button 
                 onClick={() => setLoginDialogOpen(true)}
@@ -654,29 +679,29 @@ function App() {
               <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-[#1E3A5F] mb-2">First Name</label>
-                    <Input placeholder="John" className="bg-white" required />
+                    <label htmlFor="contact-firstName" className="block text-sm font-medium text-[#1E3A5F] mb-2">First Name</label>
+                    <Input id="contact-firstName" name="firstName" placeholder="John" className="bg-white" required />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#1E3A5F] mb-2">Last Name</label>
-                    <Input placeholder="Doe" className="bg-white" required />
+                    <label htmlFor="contact-lastName" className="block text-sm font-medium text-[#1E3A5F] mb-2">Last Name</label>
+                    <Input id="contact-lastName" name="lastName" placeholder="Doe" className="bg-white" required />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1E3A5F] mb-2">Email</label>
-                  <Input type="email" placeholder="john@company.com" className="bg-white" required />
+                  <label htmlFor="contact-email" className="block text-sm font-medium text-[#1E3A5F] mb-2">Email</label>
+                  <Input id="contact-email" name="email" type="email" placeholder="john@company.com" className="bg-white" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1E3A5F] mb-2">Company</label>
-                  <Input placeholder="Your company name" className="bg-white" />
+                  <label htmlFor="contact-company" className="block text-sm font-medium text-[#1E3A5F] mb-2">Company</label>
+                  <Input id="contact-company" name="company" placeholder="Your company name" className="bg-white" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1E3A5F] mb-2">Project Type</label>
-                  <Input placeholder="e.g., Senior Living, Healthcare, Commercial..." className="bg-white" />
+                  <label htmlFor="contact-projectType" className="block text-sm font-medium text-[#1E3A5F] mb-2">Project Type</label>
+                  <Input id="contact-projectType" name="projectType" placeholder="e.g., Senior Living, Healthcare, Commercial..." className="bg-white" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1E3A5F] mb-2">Message</label>
-                  <Textarea placeholder="Tell us about your project..." className="bg-white min-h-[120px]" />
+                  <label htmlFor="contact-message" className="block text-sm font-medium text-[#1E3A5F] mb-2">Message</label>
+                  <Textarea id="contact-message" name="message" placeholder="Tell us about your project..." className="bg-white min-h-[120px]" />
                 </div>
                 <button type="submit" className="w-full btn-primary">
                   Send Message
@@ -703,14 +728,14 @@ function App() {
                 Built by owner's representatives, for owner's representatives.
               </p>
               <div className="flex gap-4 mt-6">
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#EAAA00] hover:text-[#1E3A5F] transition-all">
-                  <Linkedin className="w-5 h-5" />
+                <a href="https://www.linkedin.com/company/pandion-development-management" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#EAAA00] hover:text-[#1E3A5F] transition-all" aria-label="Visit Pandion on LinkedIn">
+                  <LinkedinIcon className="w-5 h-5" />
                 </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#EAAA00] hover:text-[#1E3A5F] transition-all">
-                  <Twitter className="w-5 h-5" />
+                <a href="https://www.twitter.com/pandion_dms" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#EAAA00] hover:text-[#1E3A5F] transition-all" aria-label="Visit Pandion on Twitter">
+                  <TwitterIcon className="w-5 h-5" />
                 </a>
-                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#EAAA00] hover:text-[#1E3A5F] transition-all">
-                  <Youtube className="w-5 h-5" />
+                <a href="https://www.youtube.com/@pandiondms" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#EAAA00] hover:text-[#1E3A5F] transition-all" aria-label="Visit Pandion on YouTube">
+                  <YoutubeIcon className="w-5 h-5" />
                 </a>
               </div>
             </div>
@@ -718,9 +743,9 @@ function App() {
             <div>
               <h4 className="font-semibold mb-4">Aerie</h4>
               <ul className="space-y-3">
-                <li><button onClick={() => scrollToSection('features')} className="text-white/70 hover:text-[#EAAA00] transition-colors">Features</button></li>
-                <li><button onClick={() => scrollToSection('reports')} className="text-white/70 hover:text-[#EAAA00] transition-colors">Reports</button></li>
-                <li><button onClick={() => setLoginDialogOpen(true)} className="text-white/70 hover:text-[#EAAA00] transition-colors">Login</button></li>
+                <li><button onClick={() => scrollToSection('features')} className="text-white/70 hover:text-[#EAAA00] transition-colors" aria-label="Navigate to Features section">Features</button></li>
+                <li><button onClick={() => scrollToSection('reports')} className="text-white/70 hover:text-[#EAAA00] transition-colors" aria-label="Navigate to Reports section">Reports</button></li>
+                <li><button onClick={() => setLoginDialogOpen(true)} className="text-white/70 hover:text-[#EAAA00] transition-colors" aria-label="Open login dialog">Login</button></li>
               </ul>
             </div>
 
@@ -760,29 +785,29 @@ function App() {
           <form onSubmit={handleContactSubmit} className="space-y-4 mt-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#1E3A5F] mb-1">First Name</label>
-                <Input placeholder="John" required />
+                <label htmlFor="dialog-firstName" className="block text-sm font-medium text-[#1E3A5F] mb-1">First Name</label>
+                <Input id="dialog-firstName" name="firstName" placeholder="John" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1E3A5F] mb-1">Last Name</label>
-                <Input placeholder="Doe" required />
+                <label htmlFor="dialog-lastName" className="block text-sm font-medium text-[#1E3A5F] mb-1">Last Name</label>
+                <Input id="dialog-lastName" name="lastName" placeholder="Doe" required />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#1E3A5F] mb-1">Email</label>
-              <Input type="email" placeholder="john@company.com" required />
+              <label htmlFor="dialog-email" className="block text-sm font-medium text-[#1E3A5F] mb-1">Email</label>
+              <Input id="dialog-email" name="email" type="email" placeholder="john@company.com" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#1E3A5F] mb-1">Company</label>
-              <Input placeholder="Your company name" />
+              <label htmlFor="dialog-company" className="block text-sm font-medium text-[#1E3A5F] mb-1">Company</label>
+              <Input id="dialog-company" name="company" placeholder="Your company name" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#1E3A5F] mb-1">Project Type</label>
-              <Input placeholder="e.g., Senior Living, Healthcare..." />
+              <label htmlFor="dialog-projectType" className="block text-sm font-medium text-[#1E3A5F] mb-1">Project Type</label>
+              <Input id="dialog-projectType" name="projectType" placeholder="e.g., Senior Living, Healthcare..." />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#1E3A5F] mb-1">Message</label>
-              <Textarea placeholder="Tell us about your project..." />
+              <label htmlFor="dialog-message" className="block text-sm font-medium text-[#1E3A5F] mb-1">Message</label>
+              <Textarea id="dialog-message" name="message" placeholder="Tell us about your project..." />
             </div>
             <button type="submit" className="w-full btn-primary">
               Submit Request
@@ -823,6 +848,9 @@ function App() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Toast Notifications */}
+      <Toaster />
     </div>
   );
 }
